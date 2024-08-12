@@ -49,7 +49,7 @@
                     <select class="custom-select select2-search" name="sala" id="rooms" required>
                         <option selected disabled>Seleccione la sala</option>
                         @foreach ($rooms as $room)
-                            <option value="{{ $room->CardCode }}">{{ $room->CardName - $room->AliasName}}</option>
+                            <option value="{{ $room->CardCode }}">{{ $room->CardName - $room->AliasName }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -65,8 +65,8 @@
                         @if (count($productos) > 0)
                             @foreach ($productos as $product)
                                 <option value="{{ $product->ItemCode }}">
-                                    
-                                {{ $product->CodeBars }}-{{ $product->ItemName }}
+
+                                    {{ $product->CodeBars }}-{{ $product->ItemName }}
                                 </option>
                             @endforeach
                         @else
@@ -124,7 +124,7 @@
 @stop
 
 @section('js')
-@livewireScripts
+    @livewireScripts
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.js"></script>
 
@@ -134,7 +134,6 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <!-- Enlace al archivo JavaScript de select2-cjk-compatibility -->
     <script>
-        
         $(document).ready(function() {
             $('#chain').select2();
             $('#rooms').select2();
@@ -150,11 +149,11 @@
                     $('#rooms').empty().append(
                         '<option value="" selected disabled>Seleccione la sala</option>');
                     response.rooms.forEach(function(room) {
-                    console.log(room);
+                        console.log(room);
 
-                        $('#rooms').append('<option value="' + room.CardCode + '">'  + room
-                            .CardName +'-' + room
-                            .AliasName +'</option>');
+                        $('#rooms').append('<option value="' + room.CardCode + '">' + room
+                            .CardName + '-' + room
+                            .AliasName + '</option>');
                     });
                     $('#rooms').select2();
                 });
@@ -165,23 +164,23 @@
 
                 var allFieldsFilled = true;
 
-$(this).find('input, select').each(function() {
-    if ($(this).prop('required') && !$(this).val()) {
-        allFieldsFilled = false;
-        return false; // Salir del bucle al encontrar un campo vacío
-    }
-});
+                $(this).find('input, select').each(function() {
+                    if ($(this).prop('required') && !$(this).val()) {
+                        allFieldsFilled = false;
+                        return false; // Salir del bucle al encontrar un campo vacío
+                    }
+                });
 
-if (!allFieldsFilled) {
-    // Mostrar alerta SweetAlert de validación
-    Swal.fire({
-        icon: 'error',
-        title: 'Campos Incompletos',
-        text: 'Por favor, complete todos los campos requeridos',
-        confirmButtonText: 'Aceptar'
-    });
-    return;
-}
+                if (!allFieldsFilled) {
+                    // Mostrar alerta SweetAlert de validación
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Campos Incompletos',
+                        text: 'Por favor, complete todos los campos requeridos',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    return;
+                }
 
 
                 var formData = $(this).serialize(); // Serialize form data
@@ -213,10 +212,21 @@ if (!allFieldsFilled) {
                         $('#producto').val(null).trigger('change');
                         console.log('Data saved successfully:', response);
                     },
-                    error: function(error) {
-                        // Handle error response here, such as showing an error message
-                        console.error('Error while saving data:', error);
-                    }
+                    error: function(xhr, status, error) {
+                    // Handle error response here
+                    console.error('Error while saving data:', error);
+
+                    // Extract error message from response
+                    var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : 'Ha ocurrido un error inesperado.';
+
+                    // Show SweetAlert error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: errorMessage,
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
                 });
             });
 

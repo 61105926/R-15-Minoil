@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use PDO;
+use Carbon\Carbon;
+
 
 class HomeController extends Controller
 {
@@ -191,7 +193,14 @@ class HomeController extends Controller
             $currentMonthFormatted = str_pad($currentMonth, 2, '0', STR_PAD_LEFT);
             $currentYear = date('Y');
 
+            // Validar la fecha FV
+            $fvDate = Carbon::parse($fv);
+            $startDate = Carbon::now()->subYear(); // Un año antes
+            $endDate = Carbon::now()->addYears(3); // Tres años después
 
+            if ($fvDate->lt($startDate) || $fvDate->gt($endDate)) {
+                return response()->json(['message' => 'La fecha de vencimiento debe estar dentro del rango año actual  y 3 años después de la fecha actual.'], 400);
+            }
             $existingRecord = DB::connection('odbc')->select(
                 "SELECT * FROM \"MINOILDES\".\"TRADE_StockLotes\"
             WHERE \"CardCode\" = '$cardCode' AND \"ItemCode\" = '$itemCode'  AND \"IdCenso\" = '$censo'  AND \"FV\" = ' $fv'  
@@ -221,5 +230,4 @@ class HomeController extends Controller
         //dd($request->all());
         // Return a response indicating success or failure
     }
-    
 }
